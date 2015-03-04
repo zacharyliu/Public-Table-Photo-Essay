@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en"> 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+  <title>Public Table - Interactive Photo Essay</title>
+  
+  <style type="text/css">
+    #photo {
+      position: relative;
+    }
+
+    #photo img {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="main">
+  <!-- <div id="info"></div> -->
+    <div id="photo">
+      <img id="photo0" src="DSC05984.jpg" />
+      <img id="photo1" src="DSC05989.jpg" />
+      <img id="photo2" src="DSC05988.jpg" />
+      <img id="photo3" src="DSC05991.jpg" />
+    </div>
+    
+    <!-- <h2>Device Motion</h2>
+    <table>
+      <tr>
+          <td>Event Supported</td><td id="dmEvent"></td>
+        </tr>
+      <tr>
+        <td>acceleration</td><td id="doTiltLR"></td>
+      </tr>
+    </table> -->
+    <!-- <div style="position: relative; width: 300px; height: 300px;">
+    <div id="test" style="position: absolute;">x</div>
+    </div> -->
+  </div>
+  
+  <script type="text/javascript">
+    // var px = py = pz = vx = vy = vz = 0;
+    // var afilter = 0.3;
+    // var afilter2 = 20;
+    // var vfilter = 0.9;
+    // var pfilter = 0.95;
+    var opacity = [0, 0, 0, 0];
+    var photo = ["photo0", "photo1", "photo2", "photo3"];
+    init();
+
+    
+    // function init() {
+    //   if ((window.DeviceMotionEvent) || ('listenForDeviceMovement' in window)) {
+    //     window.addEventListener('devicemotion', deviceMotionHandler, false);
+    //   } else {
+    //     document.getElementById("dmEvent").innerHTML = "Not supported on your device or browser."
+    //   }
+    // }
+    
+    // function deviceMotionHandler(eventData) {
+    //   var info, xyz = "[X, Y, Z]";
+
+    //   // Grab the acceleration including gravity from the results
+    //   var acceleration = eventData.acceleration;
+    //   var dt = eventData.interval / 1000;
+
+    //   var ax = acceleration.x - Math.sign(acceleration.x) * Math.min(Math.abs(acceleration.x), afilter);
+    //   var ay = acceleration.y - Math.sign(acceleration.y) * Math.min(Math.abs(acceleration.y), afilter);
+    //   var az = acceleration.z - Math.sign(acceleration.z) * Math.min(Math.abs(acceleration.z), afilter);
+
+    //   // ax -= Math.sign(px) / Math.pow(px+0.1, 2) / afilter2;
+    //   // ay -= Math.sign(py) / Math.pow(py+0.1, 2) / afilter2;
+    //   // az -= Math.sign(pz) / Math.pow(pz+0.1, 2) / afilter2;
+
+    //   vx += ax * dt;
+    //   vx *= vfilter;
+    //   vy += ay * dt;
+    //   vy *= vfilter;
+    //   vz += az * dt;
+    //   vz *= vfilter;
+
+    //   px += vx * dt;
+    //   px *= pfilter;
+    //   py += vy * dt;
+    //   py *= pfilter;
+    //   pz += vz * dt;
+    //   pz *= pfilter;
+
+    //   // document.getElementById("moAccel").innerHTML = ax + "<br>" + ay + "<br>" + az + "<br>" + vx + "<br>" + vy + "<br>" + vz + "<br>" + px + "<br>" + py + "<br>" + pz;
+    //   document.getElementById("moAccel").innerHTML = 1000*px + "<br>" + 1000*py + "<br>" + 1000*pz;
+    //   document.getElementById("test").style["font-size"] = (20 + (1 * pz) * 500) + "px";
+    //   document.getElementById("test").style.top = (150 + (-1 * py) * 1000) + "px";
+    //   document.getElementById("test").style.left = (150 + (1 * px) * 1000) + "px";
+
+    //   opacity[0] = Math.min(1, Math.max(0, 1000*px/50 + 0.5));
+    //   opacity[1] = Math.min(1, Math.max(0, 1000*px/50 + 0.5));
+    //   opacity[2] = 1 - opacity[0];
+    //   opacity[3] = 1 - opacity[0];
+
+    //   for (var i=0; i<4; i++) {
+    //     document.getElementById(photo[i]).style.opacity = opacity[i];
+    //   }
+    // }
+
+    function init() {
+      if (window.DeviceOrientationEvent) {
+        // document.getElementById("doEvent").innerHTML = "DeviceOrientation";
+        // Listen for the deviceorientation event and handle the raw data
+        window.addEventListener('deviceorientation', function(eventData) {
+          // gamma is the left-to-right tilt in degrees, where right is positive
+          var tiltLR = eventData.gamma;
+          
+          // beta is the front-to-back tilt in degrees, where front is positive
+          var tiltFB = eventData.beta;
+          
+          // alpha is the compass direction the device is facing in degrees
+          var dir = eventData.alpha
+          
+          // call our orientation event handler
+          deviceOrientationHandler(tiltLR, tiltFB, dir);
+          }, false);
+      } else {
+        // document.getElementById("doEvent").innerHTML = "Not supported on your device or browser.  Sorry."
+      }
+    }
+  
+    function deviceOrientationHandler(tiltLR, tiltFB, dir) {
+      opacity[0] = Math.min(1, Math.max(0, tiltLR/20 + 0.5));
+      opacity[1] = 1 - opacity[0];
+      opacity[2] = Math.min(0.5, Math.max(0, tiltFB/20 + 0.25));
+      opacity[3] = 0.5 - opacity[2];
+
+      for (var i=0; i<4; i++) {
+        document.getElementById(photo[i]).style.opacity = opacity[i];
+      }
+
+      // document.getElementById("info").innerHTML = tiltLR + "<br>" + tiltFB;
+    }
+  </script>
+  
+</body>
+</html>
